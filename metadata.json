@@ -1,0 +1,7 @@
+{
+  "name": "Gemma Arabic Voice Assistant",
+  "description": "A voice-controlled AI assistant that connects to a local Gemma model via LM Studio. It's designed for seamless, hands-free interaction in Arabic, allowing users to ask questions, get summaries, and perform other conversational tasks.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

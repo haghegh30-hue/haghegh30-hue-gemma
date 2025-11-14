@@ -1,16 +1,26 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Message, AppStatus } from './types';
 import { useVoiceProcessor } from './hooks/useVoiceProcessor';
-import { getGemmaResponse } from './services/lmStudioService';
+import { getGemmaResponse } from './services/localAiService';
+import { useSettings } from './hooks/useSettings';
 import ChatBubble from './components/ChatBubble';
 import MicrophoneButton from './components/MicrophoneButton';
 import IntroCard from './components/IntroCard';
+import SettingsModal from './components/SettingsModal';
+
+const SettingsIcon: React.FC<{ onClick: () => void }> = ({ onClick }) => (
+  <svg onClick={onClick} xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400 hover:text-white cursor-pointer transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+  </svg>
+);
 
 const App: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [status, setStatus] = useState<AppStatus>('idle');
   const [error, setError] = useState<string | null>(null);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const { settings, saveSettings } = useSettings();
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -19,8 +29,6 @@ const App: React.FC = () => {
     speak,
     transcript,
     isListening,
-    isSpeaking,
-    isSupported,
   } = useVoiceProcessor({
     onListenStart: () => setStatus('listening'),
     onListenStop: (finalTranscript: string) => {
@@ -40,11 +48,11 @@ const App: React.FC = () => {
       const processRequest = async () => {
         setError(null);
         try {
-          const aiResponseText = await getGemmaResponse(lastMessage.text, messages.slice(0, -1));
+          const aiResponseText = await getGemmaResponse(settings.url, lastMessage.text, messages.slice(0, -1));
           setMessages((prev) => [...prev, { sender: 'ai', text: aiResponseText }]);
           speak(aiResponseText);
         } catch (err) {
-          const errorMessage = 'Failed to connect to LM Studio. Please ensure it is running and accessible at http://localhost:1234. CORS might need to be enabled.';
+          const errorMessage = `Failed to connect to your local AI model at ${settings.url}. Please ensure the server is running and check your configuration in the settings panel.`;
           setError(errorMessage);
           setMessages((prev) => [...prev, { sender: 'ai', text: `عفواً، حدث خطأ. ${errorMessage}` }]);
           setStatus('idle');
@@ -53,7 +61,7 @@ const App: React.FC = () => {
       processRequest();
     }
      // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [messages, speak]);
+  }, [messages, speak, settings.url]);
   
   // Auto-scroll chat
   useEffect(() => {
@@ -70,11 +78,17 @@ const App: React.FC = () => {
     }
   };
 
+  const isSupported = 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
+
   return (
     <div className="bg-gray-900 text-white h-screen flex flex-col font-sans">
-      <header className="p-4 text-center border-b border-gray-700">
-        <h1 className="text-2xl font-bold text-teal-400">Gemma Arabic Voice Assistant</h1>
-        <p className="text-sm text-gray-400">Powered by Local LM Studio</p>
+      <header className="p-4 flex items-center justify-between border-b border-gray-700">
+        <div className="w-6"></div> {/* Spacer */}
+        <div className="text-center">
+            <h1 className="text-2xl font-bold text-teal-400">Gemma Arabic Voice Assistant</h1>
+            <p className="text-sm text-gray-400">Powered by Local AI</p>
+        </div>
+        <SettingsIcon onClick={() => setIsSettingsOpen(true)} />
       </header>
       
       {!isSupported && (
@@ -107,6 +121,16 @@ const App: React.FC = () => {
           Click the microphone to start speaking.
         </p>
       </footer>
+      
+      <SettingsModal 
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        currentSettings={settings}
+        onSave={(newSettings) => {
+            saveSettings(newSettings);
+            setIsSettingsOpen(false);
+        }}
+      />
     </div>
   );
 };

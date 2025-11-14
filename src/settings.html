@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Settings</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 1rem;
+      direction: rtl;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+    select, input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <label for="provider-select">Provider:</label>
+  <select id="provider-select">
+    <option value="ollama">Ollama</option>
+    <option value="lm-studio">LM Studio</option>
+  </select>
+
+  <label for="model-input">Model Name:</label>
+  <input type="text" id="model-input" placeholder="e.g., llama2">
+
+  <button id="save-button">Save Settings</button>
+</body>
+</html>

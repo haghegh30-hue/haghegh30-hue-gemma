@@ -1,0 +1,105 @@
+/* General styles */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 1rem;
+  background-color: #f0f2f5;
+  direction: rtl;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  height: 95vh;
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* Messages area */
+#messages {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.message {
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.user-message {
+  text-align: left;
+  color: #fff;
+  background-color: #007bff;
+  padding: 0.5rem 1rem;
+  border-radius: 1.25rem;
+  max-width: 70%;
+  align-self: flex-start;
+}
+
+.assistant-message {
+  text-align: right;
+  color: #333;
+  background-color: #e9e9eb;
+  padding: 0.5rem 1rem;
+  border-radius: 1.25rem;
+  max-width: 70%;
+  align-self: flex-end;
+}
+
+/* Input area */
+#input-area {
+  display: flex;
+  padding: 1rem;
+  border-top: 1px solid #ddd;
+  background-color: #f0f2f5;
+}
+
+#prompt-input {
+  flex-grow: 1;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 1.5rem;
+  font-size: 1rem;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 1.5rem;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  font-size: 1rem;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+#voice-button,
+#search-button,
+#send-button {
+  padding: 0.75rem;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Settings button */
+#settings-button {
+  position: absolute;
+  top: 1.5rem;
+  left: 1.5rem;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: #555;
+}

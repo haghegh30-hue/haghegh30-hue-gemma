@@ -7,6 +7,7 @@ import ChatBubble from './components/ChatBubble';
 import MicrophoneButton from './components/MicrophoneButton';
 import IntroCard from './components/IntroCard';
 import SettingsModal from './components/SettingsModal';
+import Avatar3D from './components/Avatar3D';
 
 const SettingsIcon: React.FC<{ onClick: () => void }> = ({ onClick }) => (
   <svg onClick={onClick} xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-400 hover:text-white cursor-pointer transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -97,11 +98,29 @@ const App: React.FC = () => {
           </div>
       )}
 
-      <main ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 space-y-6">
-        {messages.length === 0 && <IntroCard />}
-        {messages.map((msg, index) => (
-          <ChatBubble key={index} message={msg} />
-        ))}
+      <main ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 space-y-6 flex flex-col">
+        {messages.length === 0 && (
+          <div className="flex flex-col items-center">
+            <div className="w-full h-64 md:h-80 lg:h-96">
+              <Avatar3D status={status} />
+            </div>
+            <IntroCard />
+          </div>
+        )}
+        {messages.length > 0 && (
+          <div className="w-full max-w-2xl mx-auto">
+             <div className="flex justify-center mb-4">
+                <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-teal-500/30">
+                  <Avatar3D status={status} />
+                </div>
+             </div>
+             <div className="space-y-6">
+              {messages.map((msg, index) => (
+                <ChatBubble key={index} message={msg} />
+              ))}
+             </div>
+          </div>
+        )}
         {isListening && transcript && (
           <div className="text-center text-gray-400 italic animate-pulse">
             {transcript}...
